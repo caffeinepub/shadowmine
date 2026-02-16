@@ -1,37 +1,22 @@
 import { Button } from '@/components/ui/button';
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowUp, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface TouchControlsProps {
   onMoveLeft: () => void;
   onMoveRight: () => void;
-  onMoveDown: () => void;
   onJump: () => void;
 }
 
 /**
  * On-screen touch controls for mobile devices.
- * Provides directional buttons for movement and jump.
+ * Provides left/right directional buttons and a jump button.
  */
-export function TouchControls({ onMoveLeft, onMoveRight, onMoveDown, onJump }: TouchControlsProps) {
+export function TouchControls({ onMoveLeft, onMoveRight, onJump }: TouchControlsProps) {
   return (
     <div className="fixed bottom-8 left-0 right-0 flex justify-center items-end gap-8 px-4 pointer-events-none z-50">
-      {/* Left/Right/Down controls */}
+      {/* Left/Right controls */}
       <div className="relative pointer-events-auto">
-        <div className="grid grid-cols-3 gap-2">
-          <div />
-          <Button
-            size="lg"
-            variant="secondary"
-            className="w-16 h-16 bg-stone-800/90 hover:bg-stone-700/90 border-2 border-amber-600/50 active:bg-amber-700/50"
-            onTouchStart={(e) => {
-              e.preventDefault();
-              onMoveDown();
-            }}
-          >
-            <ArrowDown className="w-6 h-6 text-amber-400" />
-          </Button>
-          <div />
-          
+        <div className="flex gap-2">
           <Button
             size="lg"
             variant="secondary"
@@ -43,7 +28,6 @@ export function TouchControls({ onMoveLeft, onMoveRight, onMoveDown, onJump }: T
           >
             <ArrowLeft className="w-6 h-6 text-amber-400" />
           </Button>
-          <div />
           <Button
             size="lg"
             variant="secondary"

@@ -27,3 +27,18 @@ export function incrementBlockCount(
     [blockType]: inventory[blockType] + 1,
   };
 }
+
+export function decrementBlockCount(
+  inventory: InventoryCounts,
+  blockType: BlockType
+): InventoryCounts {
+  if (blockType === 'air') {
+    return inventory;
+  }
+
+  // Clamp at 0, never go negative
+  return {
+    ...inventory,
+    [blockType]: Math.max(0, inventory[blockType] - 1),
+  };
+}

@@ -1,18 +1,22 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
-  "summary": "2D block-mining/crafting game concept. Initial MVP is a simple 2D world with only dirt (top) and stone (below) and click-to-mine mechanics; additional systems (crafting, shops, multiplayer, mobile controls) planned for later.",
+  "projectStateVersion": 15,
+  "summary": "2D block-mining/crafting game MVP expanded to include placing mined blocks from the hotbar into empty tiles, and a responsive hotbar UI positioned at the top of the screen with different sizing on desktop vs mobile.",
   "architectural_notes": [
     "Start with a minimal MVP (dirt+stone only); add crafting/shops/resources later in incremental updates.",
     "Mining rule: a block is mineable only if at least one of its 4 sides (up/down/left/right) touches air; after mining, the new air cell reveals and enables mining of adjacent blocks.",
     "Player is a simple movable marker for now (not a full stick-figure character).",
-    "Mobile/touch controls: show on-screen directional controls only on touch devices; Up input acts as Jump (not free upward flight).",
-    "Inventory MVP decision: no separate inventory screen; mined blocks/items are automatically added directly into a simple visible hotbar."
+    "Inventory MVP decision: no separate inventory screen; mined blocks/items are automatically added directly into a simple visible hotbar.",
+    "Camera: classic follow-camera. Keep player centered while within world bounds; camera moves at same speed as player and clamps to world edges while player can continue moving until they hit the world boundary.",
+    "Block placing UX: player selects a block type from the hotbar, then clicks/taps an empty (air) tile to place it.",
+    "Hotbar UI layout: position at the top of the screen and keep it visible on both desktop and mobile; scale size by device (desktop bigger, mobile smaller).",
+    "Controls update: keyboard uses Left/Right for horizontal movement and Up for Jump; remove any Down movement/control (and corresponding on-screen Down button on touch).",
+    "Movement feel: holding Left/Right continues moving; releasing stops; pressing the opposite direction switches immediately."
   ],
   "known_issues": [
     "Bug: player can currently \"fly\" (move upward freely); upward movement should be restricted to a jump action only."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-implement-a-minimal-2d-tile-world-with-exactly-two-block-types-a-top-dirt-layer-and-a-lower-stone-layer-with-no-additional-layers-or-resources-in-this-mvp",
@@ -133,6 +137,94 @@
         "REQ-15"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-implement-a-classic-follow-camera-for-the-2d-world-so-the-player-stays-centered-in-the-visible-viewport-while-moving-and-the-camera-position-clamps-at-the-world-edges-the-camera-stops-scrolling-at-the-edge-while-the-player-can-continue-moving-until-they-reach-the-world-boundary-the-camera-must-move-at-the-same-speed-as-the-player-no-smoothing-lerp-beyond-any-existing-movement-transitions-already-used-for-the-player-marker",
+      "title": "Implement a classic follow-camera for the 2D world so the player stays centered in the visible viewport while moving, and the camera position clamps at the world edges (the camera stops scrolling at the edge while the player can continue moving until they reach the world boundary). The camera must move at the same speed as the player (no smoothing/lerp beyond any existing movement transitions already used for the player marker).",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-in-game-hud-instructions-english-to-mention-that-the-camera-follows-the-player-and-stops-scrolling-at-the-world-edges",
+      "title": "Update the in-game HUD instructions (English) to mention that the camera follows the player and stops scrolling at the world edges.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-block-placing-allow-the-player-to-select-a-block-type-dirt-or-stone-from-the-hotbar-then-click-tap-an-empty-air-tile-in-the-world-grid-to-place-that-selected-block-into-the-tile",
+      "title": "Implement block placing: allow the player to select a block type (dirt or stone) from the hotbar, then click/tap an empty (air) tile in the world grid to place that selected block into the tile.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-inventory-behavior-for-block-placing-so-that-placing-a-block-consumes-exactly-1-of-the-selected-block-type-from-the-hotbar-inventory",
+      "title": "Update inventory behavior for block placing so that placing a block consumes exactly 1 of the selected block type from the hotbar inventory.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-move-the-hotbar-ui-to-the-top-of-the-screen-top-aligned-and-ensure-it-is-visible-on-both-desktop-and-mobile",
+      "title": "Move the hotbar UI to the top of the screen (top-aligned) and ensure it is visible on both desktop and mobile.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-hotbar-responsive-render-a-bigger-hotbar-on-desktop-and-a-smaller-hotbar-on-mobile-touch-devices",
+      "title": "Make the hotbar responsive: render a bigger hotbar on desktop and a smaller hotbar on mobile (touch devices).",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-in-game-hud-instructions-english-to-explain-block-placing-controls-select-from-hotbar-then-click-tap-an-empty-tile-to-place-and-update-any-references-to-the-hotbar-location-to-match-its-new-top-of-screen-placement",
+      "title": "Update the in-game HUD instructions (English) to explain block placing controls (select from hotbar, then click/tap an empty tile to place) and update any references to the hotbar location to match its new top-of-screen placement.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-keyboard-movement-so-the-player-moves-left-while-arrowleft-is-held-and-moves-right-while-arrowright-is-held-releasing-the-key-stops-movement-pressing-the-opposite-direction-reverses-movement-immediately",
+      "title": "Update keyboard movement so the player moves left while ArrowLeft is held and moves right while ArrowRight is held; releasing the key stops movement; pressing the opposite direction reverses movement immediately.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-keyboard-controls-so-arrowup-triggers-jump-only-no-vertical-step-movement-and-remove-any-arrowdown-s-key-behavior-so-down-no-longer-causes-any-player-movement",
+      "title": "Update keyboard controls so ArrowUp triggers jump only (no vertical step movement) and remove any ArrowDown/S key behavior so Down no longer causes any player movement.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-touch-controls-ui-to-remove-the-down-button-control-and-ensure-touch-movement-only-provides-left-right-and-jump-inputs",
+      "title": "Update touch controls UI to remove the Down button/control and ensure touch movement only provides Left, Right, and Jump inputs.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-in-game-hud-movement-instructions-english-to-describe-the-new-control-scheme-left-right-move-up-jumps-and-there-is-no-down-control",
+      "title": "Update the in-game HUD movement instructions (English) to describe the new control scheme: Left/Right move, Up jumps, and there is no Down control.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -181,6 +273,36 @@
     {
       "id": "AR-8",
       "summary": "Add a simple hotbar-only inventory: mined blocks automatically go straight into the visible hotbar",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Add classic follow-camera that keeps player centered; camera moves at same speed as player and clamps at world edges (player can continue to edge)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Add block placing: select a block from the hotbar, then click/tap an empty tile to place it",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Move hotbar to the top of the screen (visible on both desktop and mobile)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Responsive hotbar sizing: bigger on computer/desktop, smaller on mobile",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Update movement controls: Left moves left, Right moves right (hold to keep moving; release stops; opposite direction reverses immediately), Up is Jump; remove Down key/control behavior",
       "reqIds": [],
       "status": "pending"
     }

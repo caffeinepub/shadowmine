@@ -1,79 +1,75 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Shadow Mine — Hotbar-only inventory with auto-loot on tile break",
+  "title": "Shadow Mine: Hold-to-walk Left/Right, Up-to-jump only, remove Down controls",
   "requirements": [
     {
-      "id": "REQ-13",
-      "summary": "Add a visible hotbar UI on the main game screen and treat it as the only inventory (client-side) showing Dirt/Stone counts starting at 0.",
+      "id": "REQ-23",
+      "summary": "Change keyboard horizontal movement to continuous hold-to-walk with immediate direction reversal and stop-on-release while preserving collision and camera behavior.",
       "acceptanceCriteria": [
-        "A hotbar is visible on the main game screen during gameplay.",
-        "The hotbar visually matches the existing mining UI theme (stone/amber styling) and does not obstruct the world grid or touch controls.",
-        "The hotbar clearly shows at least the two existing block types (dirt and stone) with a numeric count for each (starting at 0)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/game/Hotbar.tsx",
-          "operation": "create",
-          "description": "Create a mining-themed (stone/amber) Hotbar UI component that displays Dirt and Stone counts and fits within the main game screen layout without covering the world grid or the fixed touch controls. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/game/inventory.ts",
-          "operation": "create",
-          "description": "Add small client-side inventory types/helpers for hotbar counts (e.g., count shape for dirt/stone and safe increment utilities) to keep inventory logic centralized and purely frontend."
-        },
-        {
-          "path": "frontend/src/screens/GameScreen.tsx",
-          "operation": "modify",
-          "description": "Wire the new Hotbar into the main game screen and own the hotbar-only inventory state (initialize counts to 0). Pass inventory data to Hotbar and pass an inventory update callback into WorldGrid so gameplay updates reflect in the hotbar immediately."
-        },
-        {
-          "path": "frontend/src/components/game/WorldGrid.tsx",
-          "operation": "modify",
-          "description": "Update WorldGrid to accept props needed to support the hotbar-only inventory flow (e.g., a callback invoked when a mined tile fully breaks), keeping world generation and mining rules intact."
-        }
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "summary": "When a tile transitions from solid to air due to mining, immediately add exactly 1 of that block type to the hotbar with no pickup step; do not increment on partial damage or invalid mining clicks.",
-      "acceptanceCriteria": [
-        "Mining a dirt tile until it breaks increases the Dirt count in the hotbar by 1.",
-        "Mining a stone tile until it breaks increases the Stone count in the hotbar by 1.",
-        "Partial damage (clicks that do not fully break the tile) does not change any hotbar counts.",
-        "Clicks on unrevealed tiles, non-air-adjacent tiles, or air tiles do not change hotbar counts.",
-        "Hotbar counts update immediately on the same interaction that breaks the tile."
+        "Holding ArrowLeft continuously moves the player left across air tiles until released, blocked by a solid tile, or at the world boundary.",
+        "Holding ArrowRight continuously moves the player right across air tiles until released, blocked by a solid tile, or at the world boundary.",
+        "Releasing ArrowLeft/ArrowRight stops horizontal movement.",
+        "If ArrowLeft is held and ArrowRight is pressed (or vice versa), the player changes direction immediately.",
+        "Horizontal movement continues to respect existing collision rules (player cannot move into non-air tiles) and existing camera follow behavior."
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/game/WorldGrid.tsx",
           "operation": "modify",
-          "description": "Implement break-detection around the existing mining update: compare the clicked tile's type before vs after applying the existing mining logic, and only when it changes from 'dirt'/'stone' to 'air' call the provided callback exactly once with the mined block type. Ensure invalid clicks (air, unrevealed, not air-adjacent) produce no callback by relying on the existing mining rules."
-        },
-        {
-          "path": "frontend/src/game/mining.ts",
-          "operation": "modify",
-          "description": "Add a lightweight, non-breaking helper/return detail (without changing mining rules) to make it straightforward for the UI layer to determine whether a click resulted in a tile breaking (solid->air) and what the prior block type was; keep existing behavior intact for callers that only need the updated world."
-        },
-        {
-          "path": "frontend/src/screens/GameScreen.tsx",
-          "operation": "modify",
-          "description": "Handle the WorldGrid mined-block callback by incrementing the corresponding hotbar count (exactly +1 per break) in client-side state, then pass the updated counts down to Hotbar for immediate UI refresh."
+          "description": "Replace the current one-step-per-keypress left/right handling with a held-key state (keydown/keyup) and a timed horizontal movement tick so ArrowLeft/ArrowRight walk continuously while held, stop on release, and reverse immediately when the opposite direction is pressed; keep existing collision checks (canMoveTo/world bounds) and do not alter camera-follow calculations."
         }
       ]
     },
     {
-      "id": "REQ-15",
-      "summary": "Update the in-game HUD text to mention that mined blocks automatically go straight into the hotbar while keeping existing instructions accurate and readable.",
+      "id": "REQ-24",
+      "summary": "Update keyboard controls so Up triggers jump only and remove any Down/S movement behavior.",
       "acceptanceCriteria": [
-        "HUD includes a short English sentence indicating mined blocks are automatically collected into the hotbar.",
-        "Existing movement and mining rule instructions remain accurate and readable."
+        "Pressing ArrowUp triggers the existing jump behavior only when grounded, consistent with current jump/gravity rules.",
+        "Pressing ArrowDown does not move the player in any way.",
+        "Pressing S does not move the player in any way (if S was previously mapped to Down)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/game/WorldGrid.tsx",
+          "operation": "modify",
+          "description": "Update keyboard input handling so ArrowUp triggers only the existing jump behavior (no vertical step movement), and remove ArrowDown/S mappings that currently move the player down; ensure gravity/jump rules remain unchanged and that ArrowDown/S has no effect."
+        }
+      ]
+    },
+    {
+      "id": "REQ-25",
+      "summary": "Remove the Down touch control and ensure touch inputs include only Left, Right, and Jump with no Down action wired into gameplay.",
+      "acceptanceCriteria": [
+        "On touch devices, the on-screen control cluster no longer renders a Down arrow button.",
+        "There is no Down movement action wired from touch controls into the game.",
+        "Left, Right, and Jump touch controls still function."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/game/TouchControls.tsx",
+          "operation": "modify",
+          "description": "Remove the Down button from the touch control cluster, drop the onMoveDown prop, and ensure the component only exposes Left/Right/Jump actions; TouchControls uses the shadcn-ui Button component—verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/game/WorldGrid.tsx",
+          "operation": "modify",
+          "description": "Update TouchControls wiring to match the new TouchControls props by removing any Down callback and ensuring only Left, Right, and Jump touch actions are passed through to movement/jump logic."
+        }
+      ]
+    },
+    {
+      "id": "REQ-26",
+      "summary": "Update HUD movement instructions to reflect the new control scheme: Left/Right move, Up jumps, no Down control (including touch instructions).",
+      "acceptanceCriteria": [
+        "HUD movement text no longer mentions Down movement.",
+        "HUD movement text clearly states: Left/Right move, Up is Jump, and touch controls (if mentioned) do not include Down."
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/game/Hud.tsx",
           "operation": "modify",
-          "description": "Update the English HUD copy to add a short sentence explaining that mined blocks are automatically collected into the hotbar, without removing or contradicting the existing movement and mining rule instructions. Verify the component's usage instructions before implementing."
+          "description": "Edit the Movement instruction text to remove any mention of Down movement and clearly describe the updated controls (Left/Right move, Up is Jump, no Down); Hud uses shadcn-ui Card/Badge components—verify the component's usage instructions before implementing."
         }
       ]
     }

@@ -1,17 +1,22 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { generateWorld } from '../../game/world';
-import { handleTileClick, isTileRevealed } from '../../game/mining';
+import { handleTileClick, handleBlockPlacement, isTileRevealed } from '../../game/mining';
 import { Tile } from './Tile';
 import { TouchControls } from './TouchControls';
 import type { WorldGrid as WorldGridType, Position, BlockType } from '../../game/types';
+import type { InventoryCounts } from '../../game/inventory';
 import { TILE_SIZE, WORLD_WIDTH, WORLD_HEIGHT, JUMP_HEIGHT, GRAVITY_TICK_MS } from '../../game/constants';
 import { useIsTouchDevice } from '../../hooks/useIsTouchDevice';
+import { computeCameraScroll } from '../../game/camera';
 
 interface WorldGridProps {
   onBlockMined?: (blockType: BlockType) => void;
+  onBlockPlaced?: (blockType: 'dirt' | 'stone') => void;
+  selectedBlock: 'dirt' | 'stone' | null;
+  inventory: InventoryCounts;
 }
 
-export function WorldGrid({ onBlockMined }: WorldGridProps) {
+export function WorldGrid({ onBlockMined, onBlockPlaced, selectedBlock, inventory }: WorldGridProps) {
   const [world, setWorld] = useState<WorldGridType>(() => generateWorld());
   
   // Player starts at the center of the starting air pocket
@@ -24,20 +29,78 @@ export function WorldGrid({ onBlockMined }: WorldGridProps) {
   const [jumpRemaining, setJumpRemaining] = useState(0);
   const jumpRemainingRef = useRef(0);
 
+  // Horizontal movement state: track which keys are held
+  const keysHeld = useRef<{ left: boolean; right: boolean }>({ left: false, right: false });
+
+  // Viewport and camera state
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [viewportSize, setViewportSize] = useState({ width: 800, height: 600 });
+
   // Detect touch device
   const isTouch = useIsTouchDevice();
 
+  // Track viewport size
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const updateSize = () => {
+      setViewportSize({
+        width: viewport.clientWidth,
+        height: viewport.clientHeight,
+      });
+    };
+
+    // Initial size
+    updateSize();
+
+    // Watch for resize
+    const resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(viewport);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Compute camera position
+  const worldWidthPx = WORLD_WIDTH * TILE_SIZE;
+  const worldHeightPx = WORLD_HEIGHT * TILE_SIZE;
+  const playerXPx = playerPos.x * TILE_SIZE;
+  const playerYPx = playerPos.y * TILE_SIZE;
+
+  const cameraX = computeCameraScroll(playerXPx, worldWidthPx, viewportSize.width);
+  const cameraY = computeCameraScroll(playerYPx, worldHeightPx, viewportSize.height);
+
   const onTileClick = (x: number, y: number) => {
-    setWorld((currentWorld) => {
-      const result = handleTileClick(currentWorld, x, y);
-      
-      // If a block was broken, notify parent
-      if (result.blockBroken && onBlockMined) {
-        onBlockMined(result.blockBroken);
+    const tile = world[y][x];
+    
+    // If clicking on air and a block is selected, try to place
+    if (tile.type === 'air' && selectedBlock) {
+      // Check if we have inventory
+      if (inventory[selectedBlock] > 0) {
+        setWorld((currentWorld) => {
+          const result = handleBlockPlacement(currentWorld, x, y, selectedBlock);
+          
+          // If placement succeeded, notify parent to consume inventory
+          if (result.placed && onBlockPlaced) {
+            onBlockPlaced(selectedBlock);
+          }
+          
+          return result.world;
+        });
       }
-      
-      return result.world;
-    });
+    } else if (tile.type !== 'air') {
+      // Otherwise, try to mine
+      setWorld((currentWorld) => {
+        const result = handleTileClick(currentWorld, x, y);
+        
+        // If a block was broken, notify parent
+        if (result.blockBroken && onBlockMined) {
+          onBlockMined(result.blockBroken);
+        }
+        
+        return result.world;
+      });
+    }
   };
 
   // Check if a position is valid for the player to move to
@@ -93,22 +156,35 @@ export function WorldGrid({ onBlockMined }: WorldGridProps) {
           triggerJump();
           e.preventDefault();
           break;
-        case 'ArrowDown':
-        case 's':
-        case 'S':
-          movePlayer(0, 1);
-          e.preventDefault();
-          break;
         case 'ArrowLeft':
         case 'a':
         case 'A':
-          movePlayer(-1, 0);
+          keysHeld.current.left = true;
           e.preventDefault();
           break;
         case 'ArrowRight':
         case 'd':
         case 'D':
-          movePlayer(1, 0);
+          keysHeld.current.right = true;
+          e.preventDefault();
+          break;
+        default:
+          return;
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          keysHeld.current.left = false;
+          e.preventDefault();
+          break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          keysHeld.current.right = false;
           e.preventDefault();
           break;
         default:
@@ -117,8 +193,31 @@ export function WorldGrid({ onBlockMined }: WorldGridProps) {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [movePlayer, triggerJump]);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [triggerJump]);
+
+  // Continuous horizontal movement based on held keys
+  useEffect(() => {
+    const moveInterval = setInterval(() => {
+      const { left, right } = keysHeld.current;
+      
+      // If both or neither are pressed, don't move
+      if (left === right) return;
+      
+      // Move in the direction of the held key
+      if (left) {
+        movePlayer(-1, 0);
+      } else if (right) {
+        movePlayer(1, 0);
+      }
+    }, 120); // Move every 120ms for smooth continuous movement
+
+    return () => clearInterval(moveInterval);
+  }, [movePlayer]);
 
   // Jump mechanics: move player upward while jump is active
   useEffect(() => {
@@ -166,70 +265,99 @@ export function WorldGrid({ onBlockMined }: WorldGridProps) {
     jumpRemainingRef.current = jumpRemaining;
   }, [jumpRemaining]);
 
+  // Touch control handlers for continuous movement
+  const handleTouchMoveLeft = useCallback(() => {
+    movePlayer(-1, 0);
+  }, [movePlayer]);
+
+  const handleTouchMoveRight = useCallback(() => {
+    movePlayer(1, 0);
+  }, [movePlayer]);
+
   return (
     <div className="relative inline-block">
-      <div 
-        className="inline-grid gap-0 border-4 border-stone-800 shadow-2xl bg-black"
-        style={{
-          gridTemplateColumns: `repeat(${WORLD_WIDTH}, ${TILE_SIZE}px)`,
-          gridTemplateRows: `repeat(${WORLD_HEIGHT}, ${TILE_SIZE}px)`,
-        }}
-      >
-        {world.map((row, y) =>
-          row.map((tile, x) => {
-            const revealed = isTileRevealed(world, x, y);
-            return (
-              <Tile
-                key={`${x}-${y}`}
-                tile={tile}
-                x={x}
-                y={y}
-                isRevealed={revealed}
-                onClick={onTileClick}
-              />
-            );
-          })
-        )}
-      </div>
-      
-      {/* Player marker */}
+      {/* Viewport container with overflow hidden */}
       <div
-        className="absolute pointer-events-none transition-all duration-150 ease-out"
+        ref={viewportRef}
+        className="relative overflow-hidden border-4 border-stone-800 shadow-2xl bg-black"
         style={{
-          left: playerPos.x * TILE_SIZE + 4,
-          top: playerPos.y * TILE_SIZE + 4,
-          width: TILE_SIZE - 8,
-          height: TILE_SIZE - 8,
+          width: '800px',
+          height: '600px',
         }}
       >
-        {/* Simple stick figure */}
-        <svg
-          viewBox="0 0 24 24"
-          className="w-full h-full drop-shadow-lg"
-          style={{ filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.8))' }}
+        {/* Camera-translated world layer */}
+        <div
+          className="absolute top-0 left-0"
+          style={{
+            transform: `translate(${-cameraX}px, ${-cameraY}px)`,
+            width: `${worldWidthPx}px`,
+            height: `${worldHeightPx}px`,
+          }}
         >
-          {/* Head */}
-          <circle cx="12" cy="6" r="3" fill="#FFD700" stroke="#000" strokeWidth="0.5" />
-          
-          {/* Body */}
-          <line x1="12" y1="9" x2="12" y2="16" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
-          
-          {/* Arms */}
-          <line x1="12" y1="11" x2="8" y2="13" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
-          <line x1="12" y1="11" x2="16" y2="13" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
-          
-          {/* Legs */}
-          <line x1="12" y1="16" x2="9" y2="21" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
-          <line x1="12" y1="16" x2="15" y2="21" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
-        </svg>
+          {/* World grid */}
+          <div 
+            className="inline-grid gap-0"
+            style={{
+              gridTemplateColumns: `repeat(${WORLD_WIDTH}, ${TILE_SIZE}px)`,
+              gridTemplateRows: `repeat(${WORLD_HEIGHT}, ${TILE_SIZE}px)`,
+            }}
+          >
+            {world.map((row, y) =>
+              row.map((tile, x) => {
+                const revealed = isTileRevealed(world, x, y);
+                return (
+                  <Tile
+                    key={`${x}-${y}`}
+                    tile={tile}
+                    x={x}
+                    y={y}
+                    isRevealed={revealed}
+                    onClick={onTileClick}
+                  />
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Player marker in viewport coordinates */}
+        <div
+          className="absolute pointer-events-none transition-all duration-150 ease-out"
+          style={{
+            left: playerXPx - cameraX + 4,
+            top: playerYPx - cameraY + 4,
+            width: TILE_SIZE - 8,
+            height: TILE_SIZE - 8,
+          }}
+        >
+          {/* Simple stick figure */}
+          <svg
+            viewBox="0 0 24 24"
+            className="w-full h-full drop-shadow-lg"
+            style={{ filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.8))' }}
+          >
+            {/* Head */}
+            <circle cx="12" cy="6" r="3" fill="#FFD700" stroke="#000" strokeWidth="0.5" />
+            
+            {/* Body */}
+            <line x1="12" y1="9" x2="12" y2="16" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
+            
+            {/* Arms */}
+            <line x1="12" y1="11" x2="8" y2="13" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
+            <line x1="12" y1="11" x2="16" y2="13" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
+            
+            {/* Legs */}
+            <line x1="12" y1="16" x2="9" y2="21" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
+            <line x1="12" y1="16" x2="15" y2="21" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </div>
       </div>
 
       {/* Touch controls - only visible on touch devices */}
       {isTouch && (
         <TouchControls
-          onMoveLeft={() => movePlayer(-1, 0)}
-          onMoveRight={() => movePlayer(1, 0)}
-          onMoveDown={() => movePlayer(0, 1)}
+          onMoveLeft={handleTouchMoveLeft}
+          onMoveRight={handleTouchMoveRight}
           onJump={triggerJump}
         />
       )}

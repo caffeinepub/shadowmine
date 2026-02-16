@@ -2,26 +2,45 @@ import { useState, useCallback } from 'react';
 import { WorldGrid } from '../components/game/WorldGrid';
 import { Hud } from '../components/game/Hud';
 import { Hotbar } from '../components/game/Hotbar';
-import { createEmptyInventory, incrementBlockCount } from '../game/inventory';
+import { createEmptyInventory, incrementBlockCount, decrementBlockCount } from '../game/inventory';
 import type { InventoryCounts } from '../game/inventory';
 import type { BlockType } from '../game/types';
 
 export default function GameScreen() {
   const [inventory, setInventory] = useState<InventoryCounts>(createEmptyInventory());
+  const [selectedBlock, setSelectedBlock] = useState<'dirt' | 'stone' | null>(null);
 
   const handleBlockMined = useCallback((blockType: BlockType) => {
     setInventory((current) => incrementBlockCount(current, blockType));
   }, []);
 
+  const handleBlockPlaced = useCallback((blockType: 'dirt' | 'stone') => {
+    setInventory((current) => decrementBlockCount(current, blockType));
+  }, []);
+
+  const handleSelectBlock = useCallback((blockType: 'dirt' | 'stone') => {
+    // Toggle selection: if already selected, deselect; otherwise select
+    setSelectedBlock((current) => (current === blockType ? null : blockType));
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-black flex flex-col items-center justify-start p-8 gap-6">
+    <div className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-black flex flex-col items-center justify-start p-8 gap-6 pt-20">
+      <Hotbar 
+        inventory={inventory} 
+        selectedBlock={selectedBlock}
+        onSelectBlock={handleSelectBlock}
+      />
+      
       <Hud />
       
       <main className="flex flex-col items-center gap-4">
-        <WorldGrid onBlockMined={handleBlockMined} />
+        <WorldGrid 
+          onBlockMined={handleBlockMined}
+          onBlockPlaced={handleBlockPlaced}
+          selectedBlock={selectedBlock}
+          inventory={inventory}
+        />
       </main>
-
-      <Hotbar inventory={inventory} />
 
       <footer className="mt-auto pt-8 text-center text-stone-500 text-sm">
         <p>

@@ -1,11 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add a hotbar-only inventory and automatically collect mined blocks into it.
+**Goal:** Update Shadow Mine movement inputs so Left/Right are continuous while held, Up is jump-only, and Down input is removed across keyboard, touch UI, and HUD instructions.
 
 **Planned changes:**
-- Add a visible hotbar UI to the main gameplay screen showing dirt and stone with numeric counts (starting at 0) styled to match the existing stone/amber mining UI and positioned to avoid blocking the world grid or touch controls.
-- Update mining resolution so that when a tile fully breaks (solid block becomes air), exactly 1 of that block type is immediately added to the hotbar counts (no pickup step), while partial damage and invalid clicks do not change counts.
-- Update in-game English HUD text to state that mined blocks automatically go straight into the hotbar, keeping existing movement/mining instructions readable and accurate.
+- Change keyboard handling so holding ArrowLeft/ArrowRight continuously moves the player horizontally; releasing stops movement; pressing the opposite direction reverses immediately while still respecting collisions, boundaries, and existing camera follow behavior.
+- Update ArrowUp to trigger jump only (no vertical step movement) and remove any ArrowDown/S movement behavior.
+- Update touch controls UI to remove the Down control and ensure only Left, Right, and Jump inputs are available and wired.
+- Update in-game HUD movement instructions (English) to reflect: Left/Right move, Up jumps, and no Down control.
 
-**User-visible outcome:** During gameplay, players see a hotbar with dirt/stone counts that increase instantly when a block is fully mined, and the HUD explains that mined blocks are auto-collected into the hotbar.
+**User-visible outcome:** Players can hold Left/Right to walk continuously, press Up to jump when grounded, and Down/S no longer does anything; on touch devices the Down button is gone and the HUD instructions match the new controls.

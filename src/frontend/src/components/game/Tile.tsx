@@ -12,7 +12,8 @@ interface TileProps {
 
 function TileComponent({ tile, x, y, isRevealed, onClick }: TileProps) {
   const handleClick = () => {
-    if (tile.type !== 'air' && isRevealed) {
+    // Allow clicks on revealed tiles (both air and solid)
+    if (isRevealed) {
       onClick(x, y);
     }
   };
@@ -38,7 +39,7 @@ function TileComponent({ tile, x, y, isRevealed, onClick }: TileProps) {
   const getBlockStyles = () => {
     switch (tile.type) {
       case 'air':
-        return 'bg-black border-black cursor-default';
+        return 'bg-black border-black cursor-pointer';
       case 'dirt':
         return 'bg-amber-800 border-amber-900 hover:brightness-110 cursor-pointer transition-all';
       case 'stone':

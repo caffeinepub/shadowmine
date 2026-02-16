@@ -105,3 +105,40 @@ export function handleTileClick(
   
   return { world: newWorld, blockBroken };
 }
+
+// Helper to create a placed tile with proper mining stats
+export function createPlacedTile(blockType: 'dirt' | 'stone'): TileState {
+  const maxHits = getRequiredHits(blockType);
+  return {
+    type: blockType,
+    remainingHits: maxHits,
+    maxHits: maxHits,
+  };
+}
+
+export interface PlacementResult {
+  world: WorldGrid;
+  placed: boolean; // true if placement succeeded
+}
+
+// Attempt to place a block at the given position
+// Only succeeds if the target tile is air
+export function handleBlockPlacement(
+  world: WorldGrid,
+  x: number,
+  y: number,
+  blockType: 'dirt' | 'stone'
+): PlacementResult {
+  const tile = world[y][x];
+  
+  // Can only place on air tiles
+  if (tile.type !== 'air') {
+    return { world, placed: false };
+  }
+  
+  // Create new world with placed block
+  const newWorld = world.map((row) => [...row]);
+  newWorld[y][x] = createPlacedTile(blockType);
+  
+  return { world: newWorld, placed: true };
+}

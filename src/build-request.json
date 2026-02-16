@@ -1,88 +1,96 @@
 {
   "kind": "build_request",
-  "title": "Add hotbar-only inventory and auto-loot mined blocks",
+  "title": "Update movement controls: Left/Right walk (hold), Up jump; remove Down input",
   "projectName": "Shadow Mine",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-13",
-      "text": "Add a visible hotbar UI to the main game screen that displays the player’s collected mined blocks, and treat the hotbar as the only inventory for this MVP.",
+      "id": "REQ-23",
+      "text": "Update keyboard movement so the player moves left while ArrowLeft is held and moves right while ArrowRight is held; releasing the key stops movement; pressing the opposite direction reverses movement immediately.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-last"
         ],
         "quotes": [
-          "It should just go straight into the hot bar."
+          "So there's going to be a left arrow key that moves everything that moves the person left. There will be a right arrow key that moves everyone right."
         ]
       },
       "acceptanceCriteria": [
-        "A hotbar is visible on the main game screen during gameplay.",
-        "The hotbar visually matches the existing mining UI theme (stone/amber styling) and does not obstruct the world grid or touch controls.",
-        "The hotbar clearly shows at least the two existing block types (dirt and stone) with a numeric count for each (starting at 0)."
+        "Holding ArrowLeft continuously moves the player left across air tiles until released, blocked by a solid tile, or at the world boundary.",
+        "Holding ArrowRight continuously moves the player right across air tiles until released, blocked by a solid tile, or at the world boundary.",
+        "Releasing ArrowLeft/ArrowRight stops horizontal movement.",
+        "If ArrowLeft is held and ArrowRight is pressed (or vice versa), the player changes direction immediately.",
+        "Horizontal movement continues to respect existing collision rules (player cannot move into non-air tiles) and existing camera follow behavior."
       ]
     },
     {
-      "id": "REQ-14",
-      "text": "When a tile is fully mined (i.e., it transitions from a solid block to air), automatically add exactly 1 of that block type to the hotbar inventory immediately (no intermediate pickup step).",
+      "id": "REQ-24",
+      "text": "Update keyboard controls so ArrowUp triggers jump only (no vertical step movement) and remove any ArrowDown/S key behavior so Down no longer causes any player movement.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-last"
         ],
         "quotes": [
-          "It should just go straight into the hot bar."
+          "Then the upper arrow key... will move or make him jump."
         ]
       },
       "acceptanceCriteria": [
-        "Mining a dirt tile until it breaks increases the Dirt count in the hotbar by 1.",
-        "Mining a stone tile until it breaks increases the Stone count in the hotbar by 1.",
-        "Partial damage (clicks that do not fully break the tile) does not change any hotbar counts.",
-        "Clicks on unrevealed tiles, non-air-adjacent tiles, or air tiles do not change hotbar counts.",
-        "Hotbar counts update immediately on the same interaction that breaks the tile."
+        "Pressing ArrowUp triggers the existing jump behavior only when grounded, consistent with current jump/gravity rules.",
+        "Pressing ArrowDown does not move the player in any way.",
+        "Pressing S does not move the player in any way (if S was previously mapped to Down)."
       ]
     },
     {
-      "id": "REQ-15",
-      "text": "Update the in-game HUD text (English) to mention that mined blocks automatically go straight into the hotbar.",
+      "id": "REQ-25",
+      "text": "Update touch controls UI to remove the Down button/control and ensure touch movement only provides Left, Right, and Jump inputs.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-last"
         ],
         "quotes": [
-          "It should just go straight into the hot bar."
+          "make sure to get rid of the down arrow key because there's nothing to use it for"
         ]
       },
       "acceptanceCriteria": [
-        "HUD includes a short English sentence indicating mined blocks are automatically collected into the hotbar.",
-        "Existing movement and mining rule instructions remain accurate and readable."
+        "On touch devices, the on-screen control cluster no longer renders a Down arrow button.",
+        "There is no Down movement action wired from touch controls into the game.",
+        "Left, Right, and Jump touch controls still function."
+      ]
+    },
+    {
+      "id": "REQ-26",
+      "text": "Update the in-game HUD movement instructions (English) to describe the new control scheme: Left/Right move, Up jumps, and there is no Down control.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-last"
+        ],
+        "quotes": [
+          "So there's going to be a left arrow key... There will be a right arrow key... Then the upper arrow key... make him jump."
+        ]
+      },
+      "acceptanceCriteria": [
+        "HUD movement text no longer mentions Down movement.",
+        "HUD movement text clearly states: Left/Right move, Up is Jump, and touch controls (if mentioned) do not include Down."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui or any paths listed in frontend.immutablePaths.",
-    "Do not introduce any backend dependency for the hotbar in this change; keep it purely client-side state.",
-    "Keep the world generation and existing mining rules (fog-of-war + air-adjacent requirement) intact."
+    "Do not edit files under frontend/src/components/ui (compose them only).",
+    "Do not edit immutable paths listed in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
+    "Backend remains single-actor Motoko; no backend changes are required for this request."
   ],
   "nonGoals": [
-    "No item selection/active slot mechanics (e.g., equipping, placing blocks, using tools).",
-    "No expanded inventory UI beyond the visible hotbar.",
-    "No backend persistence of inventory across reloads/logins.",
-    "No crafting, shops, or resource types beyond existing dirt and stone."
+    "Add new gameplay systems (shop/door, crafting, new blocks/resources).",
+    "Multiplayer support.",
+    "Backend persistence, accounts, or syncing player state to the canister.",
+    "Changing mining, fog-of-war, inventory, hotbar behavior, or camera behavior beyond what is required to support the movement input changes."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

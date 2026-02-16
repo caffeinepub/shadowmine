@@ -1,28 +1,33 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T20:17:22.208Z",
-  "summary": "All three requested frontend requirements (REQ-13 hotbar UI, REQ-14 auto-loot on block break only, REQ-15 HUD text update) appear to be implemented via a new Hotbar component, new client-only inventory state/helpers, mining result propagation (blockBroken) from mining -> WorldGrid -> GameScreen, and updated HUD copy.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-16T20:53:48.059Z",
+  "summary": "REQ-25 and REQ-26 appear implemented (Down touch control removed; HUD text updated to exclude Down). Keyboard behavior changes for REQ-23/REQ-24 are indicated but cannot be fully verified from the truncated WorldGrid diff.",
+  "missing_requirements": [
     {
-      "description": "Added/expanded jump + gravity mechanics (player jump state, gravity tick intervals, jump height constants) beyond the hotbar/inventory and auto-loot scope.",
-      "reason": "The BuildRequest is specifically about hotbar-only inventory + auto-loot mined blocks + HUD text; it explicitly lists non-goals and does not request new movement physics like jump/gravity tuning.",
+      "id": "REQ-23",
+      "requirement": "Update keyboard movement so the player moves left while ArrowLeft is held and moves right while ArrowRight is held; releasing the key stops movement; pressing the opposite direction reverses movement immediately.",
+      "reason": "WorldGrid.tsx is truncated before the keyboard event handling / movement tick logic, so the diff summary does not provide direct evidence that (1) movement continues while the key is held, (2) releasing stops movement, and (3) opposite-direction press immediately reverses direction while the other is held.",
       "evidence": [
-        "frontend/src/components/game/WorldGrid.tsx",
-        "frontend-file-summaries.txt (mentions \"jump/gravity tuning parameters\" in constants and \"jump/gravity physics\" in WorldGrid)"
+        "frontend/src/components/game/WorldGrid.tsx (truncated)"
+      ]
+    },
+    {
+      "id": "REQ-24",
+      "requirement": "Update keyboard controls so ArrowUp triggers jump only (no vertical step movement) and remove any ArrowDown/S key behavior so Down no longer causes any player movement.",
+      "reason": "WorldGrid.tsx is truncated before key mapping logic, so there is no direct evidence in the provided diff that ArrowDown and/or S have been fully disconnected from any movement action, nor that ArrowUp only triggers jump.",
+      "evidence": [
+        "frontend/src/components/game/WorldGrid.tsx (truncated)"
       ]
     }
   ],
-  "confidence": 0.7,
+  "hallucinated_features": [],
+  "confidence": 0.62,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/game/Hotbar.tsx",
     "frontend/src/components/game/Hud.tsx",
+    "frontend/src/components/game/TouchControls.tsx",
     "frontend/src/components/game/WorldGrid.tsx",
-    "frontend/src/game/inventory.ts",
-    "frontend/src/game/mining.ts",
-    "frontend/src/screens/GameScreen.tsx",
     "project_state.json"
   ]
 }

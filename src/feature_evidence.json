@@ -2,13 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-visible-hotbar-ui-to-the-main-game-screen-that-displays-the-player-s-collected-mined-blocks-and-treat-the-hotbar-as-the-only-inventory-for-this-mvp",
-      "featureTitle": "Add a visible hotbar UI to the main game screen that displays the player’s collected mined blocks, and treat the hotbar as the only inventory for this MVP.",
+      "featureId": "feature-update-keyboard-movement-so-the-player-moves-left-while-arrowleft-is-held-and-moves-right-while-arrowright-is-held-releasing-the-key-stops-movement-pressing-the-opposite-direction-reverses-movement-immediately",
+      "featureTitle": "Update keyboard movement so the player moves left while ArrowLeft is held and moves right while ArrowRight is held; releasing the key stops movement; pressing the opposite direction reverses movement immediately.",
       "files": [
-        "frontend/src/components/game/Hotbar.tsx",
-        "frontend/src/components/game/WorldGrid.tsx",
-        "frontend/src/game/inventory.ts",
-        "frontend/src/screens/GameScreen.tsx"
+        "frontend/src/components/game/WorldGrid.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -18,17 +15,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-13"
+        "REQ-23"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-when-a-tile-is-fully-mined-i-e-it-transitions-from-a-solid-block-to-air-automatically-add-exactly-1-of-that-block-type-to-the-hotbar-inventory-immediately-no-intermediate-pickup-step",
-      "featureTitle": "When a tile is fully mined (i.e., it transitions from a solid block to air), automatically add exactly 1 of that block type to the hotbar inventory immediately (no intermediate pickup step).",
+      "featureId": "feature-update-keyboard-controls-so-arrowup-triggers-jump-only-no-vertical-step-movement-and-remove-any-arrowdown-s-key-behavior-so-down-no-longer-causes-any-player-movement",
+      "featureTitle": "Update keyboard controls so ArrowUp triggers jump only (no vertical step movement) and remove any ArrowDown/S key behavior so Down no longer causes any player movement.",
       "files": [
-        "frontend/src/components/game/WorldGrid.tsx",
-        "frontend/src/game/mining.ts",
-        "frontend/src/screens/GameScreen.tsx"
+        "frontend/src/components/game/WorldGrid.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -38,13 +33,32 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-14"
+        "REQ-24"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-in-game-hud-text-english-to-mention-that-mined-blocks-automatically-go-straight-into-the-hotbar",
-      "featureTitle": "Update the in-game HUD text (English) to mention that mined blocks automatically go straight into the hotbar.",
+      "featureId": "feature-update-touch-controls-ui-to-remove-the-down-button-control-and-ensure-touch-movement-only-provides-left-right-and-jump-inputs",
+      "featureTitle": "Update touch controls UI to remove the Down button/control and ensure touch movement only provides Left, Right, and Jump inputs.",
+      "files": [
+        "frontend/src/components/game/TouchControls.tsx",
+        "frontend/src/components/game/WorldGrid.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-25"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-in-game-hud-movement-instructions-english-to-describe-the-new-control-scheme-left-right-move-up-jumps-and-there-is-no-down-control",
+      "featureTitle": "Update the in-game HUD movement instructions (English) to describe the new control scheme: Left/Right move, Up jumps, and there is no Down control.",
       "files": [
         "frontend/src/components/game/Hud.tsx"
       ],
@@ -56,7 +70,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-15"
+        "REQ-26"
       ],
       "confidence": "high"
     }

@@ -1,50 +1,53 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T20:17:22.211Z",
+  "generatedAt": "2026-02-16T20:53:48.062Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
-        "id": "REQ-13",
-        "summary": "Add a visible hotbar UI to the main game screen that displays the player’s collected mined blocks, and treat the hotbar as the only inventory for this MVP.",
+        "id": "REQ-23",
+        "summary": "Update keyboard movement so the player moves left while ArrowLeft is held and moves right while ArrowRight is held; releasing the key stops movement; pressing the opposite direction reverses movement immediately.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/game/Hotbar.tsx",
-          "frontend/src/game/inventory.ts",
-          "frontend/src/screens/GameScreen.tsx",
           "frontend/src/components/game/WorldGrid.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/game/Hotbar.tsx",
-          "frontend/src/game/inventory.ts",
-          "frontend/src/screens/GameScreen.tsx",
           "frontend/src/components/game/WorldGrid.tsx"
         ]
       },
       {
-        "id": "REQ-14",
-        "summary": "When a tile is fully mined (i.e., it transitions from a solid block to air), automatically add exactly 1 of that block type to the hotbar inventory immediately (no intermediate pickup step).",
+        "id": "REQ-24",
+        "summary": "Update keyboard controls so ArrowUp triggers jump only (no vertical step movement) and remove any ArrowDown/S key behavior so Down no longer causes any player movement.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/game/WorldGrid.tsx",
-          "frontend/src/game/mining.ts",
-          "frontend/src/screens/GameScreen.tsx"
+          "frontend/src/components/game/WorldGrid.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/game/WorldGrid.tsx",
-          "frontend/src/game/mining.ts",
-          "frontend/src/screens/GameScreen.tsx"
+          "frontend/src/components/game/WorldGrid.tsx"
         ]
       },
       {
-        "id": "REQ-15",
-        "summary": "Update the in-game HUD text (English) to mention that mined blocks automatically go straight into the hotbar.",
+        "id": "REQ-25",
+        "summary": "Update touch controls UI to remove the Down button/control and ensure touch movement only provides Left, Right, and Jump inputs.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/game/TouchControls.tsx",
+          "frontend/src/components/game/WorldGrid.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/game/TouchControls.tsx",
+          "frontend/src/components/game/WorldGrid.tsx"
+        ]
+      },
+      {
+        "id": "REQ-26",
+        "summary": "Update the in-game HUD movement instructions (English) to describe the new control scheme: Left/Right move, Up jumps, and there is no Down control.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/components/game/Hud.tsx"
@@ -60,12 +63,9 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/game/Hotbar.tsx",
     "frontend/src/components/game/Hud.tsx",
+    "frontend/src/components/game/TouchControls.tsx",
     "frontend/src/components/game/WorldGrid.tsx",
-    "frontend/src/game/inventory.ts",
-    "frontend/src/game/mining.ts",
-    "frontend/src/screens/GameScreen.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
