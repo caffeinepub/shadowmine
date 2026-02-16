@@ -1,0 +1,81 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Shadow Mine — Hotbar-only inventory with auto-loot on tile break",
+  "requirements": [
+    {
+      "id": "REQ-13",
+      "summary": "Add a visible hotbar UI on the main game screen and treat it as the only inventory (client-side) showing Dirt/Stone counts starting at 0.",
+      "acceptanceCriteria": [
+        "A hotbar is visible on the main game screen during gameplay.",
+        "The hotbar visually matches the existing mining UI theme (stone/amber styling) and does not obstruct the world grid or touch controls.",
+        "The hotbar clearly shows at least the two existing block types (dirt and stone) with a numeric count for each (starting at 0)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/game/Hotbar.tsx",
+          "operation": "create",
+          "description": "Create a mining-themed (stone/amber) Hotbar UI component that displays Dirt and Stone counts and fits within the main game screen layout without covering the world grid or the fixed touch controls. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/game/inventory.ts",
+          "operation": "create",
+          "description": "Add small client-side inventory types/helpers for hotbar counts (e.g., count shape for dirt/stone and safe increment utilities) to keep inventory logic centralized and purely frontend."
+        },
+        {
+          "path": "frontend/src/screens/GameScreen.tsx",
+          "operation": "modify",
+          "description": "Wire the new Hotbar into the main game screen and own the hotbar-only inventory state (initialize counts to 0). Pass inventory data to Hotbar and pass an inventory update callback into WorldGrid so gameplay updates reflect in the hotbar immediately."
+        },
+        {
+          "path": "frontend/src/components/game/WorldGrid.tsx",
+          "operation": "modify",
+          "description": "Update WorldGrid to accept props needed to support the hotbar-only inventory flow (e.g., a callback invoked when a mined tile fully breaks), keeping world generation and mining rules intact."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "When a tile transitions from solid to air due to mining, immediately add exactly 1 of that block type to the hotbar with no pickup step; do not increment on partial damage or invalid mining clicks.",
+      "acceptanceCriteria": [
+        "Mining a dirt tile until it breaks increases the Dirt count in the hotbar by 1.",
+        "Mining a stone tile until it breaks increases the Stone count in the hotbar by 1.",
+        "Partial damage (clicks that do not fully break the tile) does not change any hotbar counts.",
+        "Clicks on unrevealed tiles, non-air-adjacent tiles, or air tiles do not change hotbar counts.",
+        "Hotbar counts update immediately on the same interaction that breaks the tile."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/game/WorldGrid.tsx",
+          "operation": "modify",
+          "description": "Implement break-detection around the existing mining update: compare the clicked tile's type before vs after applying the existing mining logic, and only when it changes from 'dirt'/'stone' to 'air' call the provided callback exactly once with the mined block type. Ensure invalid clicks (air, unrevealed, not air-adjacent) produce no callback by relying on the existing mining rules."
+        },
+        {
+          "path": "frontend/src/game/mining.ts",
+          "operation": "modify",
+          "description": "Add a lightweight, non-breaking helper/return detail (without changing mining rules) to make it straightforward for the UI layer to determine whether a click resulted in a tile breaking (solid->air) and what the prior block type was; keep existing behavior intact for callers that only need the updated world."
+        },
+        {
+          "path": "frontend/src/screens/GameScreen.tsx",
+          "operation": "modify",
+          "description": "Handle the WorldGrid mined-block callback by incrementing the corresponding hotbar count (exactly +1 per break) in client-side state, then pass the updated counts down to Hotbar for immediate UI refresh."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Update the in-game HUD text to mention that mined blocks automatically go straight into the hotbar while keeping existing instructions accurate and readable.",
+      "acceptanceCriteria": [
+        "HUD includes a short English sentence indicating mined blocks are automatically collected into the hotbar.",
+        "Existing movement and mining rule instructions remain accurate and readable."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/game/Hud.tsx",
+          "operation": "modify",
+          "description": "Update the English HUD copy to add a short sentence explaining that mined blocks are automatically collected into the hotbar, without removing or contradicting the existing movement and mining rule instructions. Verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}

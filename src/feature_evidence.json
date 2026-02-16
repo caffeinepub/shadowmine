@@ -1,0 +1,64 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-add-a-visible-hotbar-ui-to-the-main-game-screen-that-displays-the-player-s-collected-mined-blocks-and-treat-the-hotbar-as-the-only-inventory-for-this-mvp",
+      "featureTitle": "Add a visible hotbar UI to the main game screen that displays the player’s collected mined blocks, and treat the hotbar as the only inventory for this MVP.",
+      "files": [
+        "frontend/src/components/game/Hotbar.tsx",
+        "frontend/src/components/game/WorldGrid.tsx",
+        "frontend/src/game/inventory.ts",
+        "frontend/src/screens/GameScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-when-a-tile-is-fully-mined-i-e-it-transitions-from-a-solid-block-to-air-automatically-add-exactly-1-of-that-block-type-to-the-hotbar-inventory-immediately-no-intermediate-pickup-step",
+      "featureTitle": "When a tile is fully mined (i.e., it transitions from a solid block to air), automatically add exactly 1 of that block type to the hotbar inventory immediately (no intermediate pickup step).",
+      "files": [
+        "frontend/src/components/game/WorldGrid.tsx",
+        "frontend/src/game/mining.ts",
+        "frontend/src/screens/GameScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-in-game-hud-text-english-to-mention-that-mined-blocks-automatically-go-straight-into-the-hotbar",
+      "featureTitle": "Update the in-game HUD text (English) to mention that mined blocks automatically go straight into the hotbar.",
+      "files": [
+        "frontend/src/components/game/Hud.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-15"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

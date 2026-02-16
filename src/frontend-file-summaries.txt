@@ -1,0 +1,19 @@
+{
+  "frontend/src/App.tsx": "Main application entry point that renders the GameScreen component.",
+  "frontend/src/game/types.ts": "TypeScript type definitions for the game including BlockType, TileState, Position, and WorldGrid.",
+  "frontend/src/game/constants.ts": "Game configuration constants including world dimensions, dirt-to-stone transition row, tile size, and new jump/gravity tuning parameters (jump height and gravity tick rate).",
+  "frontend/src/game/miningConfig.ts": "Single source of truth for mining difficulty, mapping block types to required hit counts.",
+  "frontend/src/game/world.ts": "World generation logic that creates a 2D grid with dirt on top and stone below, now includes a 3x3 starting air pocket at the top-center for the player spawn location.",
+  "frontend/src/game/mining.ts": "Pure functions for mining mechanics including air-adjacency checks, fog-of-war visibility logic, and tile damage handling; returns MiningResult with optional blockBroken field when a tile transitions from solid to air, with proper TypeScript type narrowing.",
+  "frontend/src/components/game/Tile.tsx": "Presentational component for rendering individual tiles with visual mining progress, cracking effects, and fog-of-war support that hides unrevealed tiles as black.",
+  "frontend/src/components/game/WorldGrid.tsx": "Container component managing world state, player position with jump/gravity physics, keyboard and touch controls, fog-of-war rendering, and a golden stick-figure player marker; now accepts onBlockMined callback prop to notify parent when blocks are fully mined.",
+  "frontend/src/components/game/Hud.tsx": "Heads-up display showing game instructions for movement (including jump and touch controls), air-adjacency mining rules, block mining requirements with icons, and a new line explaining automatic collection into the hotbar.",
+  "frontend/src/screens/GameScreen.tsx": "Main game screen layout with HUD, world grid, hotbar, and footer; manages client-side inventory state and wires block mining events to hotbar updates.",
+  "frontend/src/index.css": "Global styles with earthy mining-themed OKLCH color system for light and dark modes.",
+  "frontend/tailwind.config.js": "Tailwind configuration extended with Inter font family and mining-themed design tokens.",
+  "frontend/src/hooks/useQueries.ts": "Placeholder file for future React Query hooks when backend integration is needed.",
+  "frontend/src/hooks/useIsTouchDevice.ts": "Hook that detects touch-capable devices using maxTouchPoints and pointer media queries to determine when to show touch controls.",
+  "frontend/src/components/game/TouchControls.tsx": "On-screen control pad component with directional buttons (Left/Right/Down) and a jump button, visible only on touch devices and styled to match the mining theme.",
+  "frontend/src/game/inventory.ts": "Client-side inventory types and helpers for hotbar-only inventory, including InventoryCounts interface and functions to create empty inventory and increment block counts.",
+  "frontend/src/components/game/Hotbar.tsx": "Mining-themed hotbar UI component that displays dirt and stone counts in styled slots with icons, positioned at the bottom center of the screen."
+}

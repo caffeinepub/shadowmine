@@ -1,0 +1,88 @@
+{
+  "kind": "build_request",
+  "title": "Add hotbar-only inventory and auto-loot mined blocks",
+  "projectName": "Shadow Mine",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-13",
+      "text": "Add a visible hotbar UI to the main game screen that displays the player’s collected mined blocks, and treat the hotbar as the only inventory for this MVP.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "It should just go straight into the hot bar."
+        ]
+      },
+      "acceptanceCriteria": [
+        "A hotbar is visible on the main game screen during gameplay.",
+        "The hotbar visually matches the existing mining UI theme (stone/amber styling) and does not obstruct the world grid or touch controls.",
+        "The hotbar clearly shows at least the two existing block types (dirt and stone) with a numeric count for each (starting at 0)."
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "When a tile is fully mined (i.e., it transitions from a solid block to air), automatically add exactly 1 of that block type to the hotbar inventory immediately (no intermediate pickup step).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "It should just go straight into the hot bar."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Mining a dirt tile until it breaks increases the Dirt count in the hotbar by 1.",
+        "Mining a stone tile until it breaks increases the Stone count in the hotbar by 1.",
+        "Partial damage (clicks that do not fully break the tile) does not change any hotbar counts.",
+        "Clicks on unrevealed tiles, non-air-adjacent tiles, or air tiles do not change hotbar counts.",
+        "Hotbar counts update immediately on the same interaction that breaks the tile."
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Update the in-game HUD text (English) to mention that mined blocks automatically go straight into the hotbar.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "It should just go straight into the hot bar."
+        ]
+      },
+      "acceptanceCriteria": [
+        "HUD includes a short English sentence indicating mined blocks are automatically collected into the hotbar.",
+        "Existing movement and mining rule instructions remain accurate and readable."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit files under frontend/src/components/ui or any paths listed in frontend.immutablePaths.",
+    "Do not introduce any backend dependency for the hotbar in this change; keep it purely client-side state.",
+    "Keep the world generation and existing mining rules (fog-of-war + air-adjacent requirement) intact."
+  ],
+  "nonGoals": [
+    "No item selection/active slot mechanics (e.g., equipping, placing blocks, using tools).",
+    "No expanded inventory UI beyond the visible hotbar.",
+    "No backend persistence of inventory across reloads/logins.",
+    "No crafting, shops, or resource types beyond existing dirt and stone."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

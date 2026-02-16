@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 9,
+  "summary": "2D block-mining/crafting game concept. Initial MVP is a simple 2D world with only dirt (top) and stone (below) and click-to-mine mechanics; additional systems (crafting, shops, multiplayer, mobile controls) planned for later.",
+  "architectural_notes": [
+    "Start with a minimal MVP (dirt+stone only); add crafting/shops/resources later in incremental updates.",
+    "Mining rule: a block is mineable only if at least one of its 4 sides (up/down/left/right) touches air; after mining, the new air cell reveals and enables mining of adjacent blocks.",
+    "Player is a simple movable marker for now (not a full stick-figure character).",
+    "Mobile/touch controls: show on-screen directional controls only on touch devices; Up input acts as Jump (not free upward flight).",
+    "Inventory MVP decision: no separate inventory screen; mined blocks/items are automatically added directly into a simple visible hotbar."
+  ],
+  "known_issues": [
+    "Bug: player can currently \"fly\" (move upward freely); upward movement should be restricted to a jump action only."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-implement-a-minimal-2d-tile-world-with-exactly-two-block-types-a-top-dirt-layer-and-a-lower-stone-layer-with-no-additional-layers-or-resources-in-this-mvp",
+      "title": "Implement a minimal 2D tile world with exactly two block types: a top dirt layer and a lower stone layer, with no additional layers or resources in this MVP.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-click-to-mine-interaction-for-blocks-where-blocks-require-a-configurable-number-of-clicks-to-break-stone-must-require-more-clicks-than-dirt-to-demonstrate-more-clicks-for-more-valuable-harder-resources",
+      "title": "Add click-to-mine interaction for blocks, where blocks require a configurable number of clicks to break; stone must require more clicks than dirt to demonstrate 'more clicks for more valuable/harder resources'.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-simple-player-facing-hud-instructions-in-english-that-explains-how-to-mine-click-blocks-and-that-some-blocks-take-more-clicks-to-break",
+      "title": "Add a simple player-facing HUD/instructions in English that explains how to mine (click blocks) and that some blocks take more clicks to break.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-and-apply-a-coherent-visual-theme-for-the-mvp-ui-colors-typography-and-tile-styling-that-fits-a-2d-mining-game-and-is-used-consistently-across-the-main-screen-and-hud",
+      "title": "Create and apply a coherent visual theme for the MVP UI (colors, typography, and tile styling) that fits a 2D mining game and is used consistently across the main screen and HUD.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restrict-mining-so-a-block-can-only-be-mined-when-it-is-touching-air-on-at-least-one-of-its-four-cardinal-sides-up-down-left-right-treat-out-of-bounds-space-outside-the-world-grid-as-air-so-edge-blocks-are-considered-air-adjacent",
+      "title": "Restrict mining so a block can only be mined when it is touching air on at least one of its four cardinal sides (up, down, left, right). Treat out-of-bounds space outside the world grid as air, so edge blocks are considered air-adjacent.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-fog-of-war-rendering-so-that-only-tiles-that-are-air-or-non-air-tiles-that-are-air-adjacent-in-the-4-neighborhood-are-visually-revealed-all-other-non-air-tiles-must-render-as-fully-hidden-black-and-must-not-be-clickable-minable-while-hidden",
+      "title": "Implement fog-of-war rendering so that only tiles that are air, or non-air tiles that are air-adjacent in the 4-neighborhood, are visually revealed. All other non-air tiles must render as fully hidden (black) and must not be clickable/minable while hidden.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-movable-player-marker-to-the-world-grid-and-basic-movement-controls-so-the-player-actually-moves-around-the-player-must-not-be-able-to-move-into-solid-non-air-tiles",
+      "title": "Add a movable player marker to the world grid and basic movement controls so the player “actually moves around.” The player must not be able to move into solid (non-air) tiles.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-user-facing-hud-text-english-to-explain-the-new-mining-rule-blocks-can-only-be-mined-if-they-are-adjacent-to-air-up-down-left-right-and-mining-reveals-adjacent-blocks",
+      "title": "Update user-facing HUD text (English) to explain the new mining rule: blocks can only be mined if they are adjacent to air (up/down/left/right), and mining reveals adjacent blocks.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-on-screen-movement-controls-that-appear-only-on-touch-devices-and-allow-the-player-to-move-left-right-and-down-plus-a-dedicated-jump-control-using-the-up-input-as-jump",
+      "title": "Add on-screen movement controls that appear only on touch devices and allow the player to move left, right, and down, plus a dedicated Jump control (using the up input as jump).",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-jump-gravity-movement-rules-so-the-player-cannot-fly-the-up-input-keyboard-arrowup-w-and-touch-up-must-perform-a-jump-and-the-player-must-fall-when-not-supported-by-a-solid-tile-beneath",
+      "title": "Implement jump + gravity movement rules so the player cannot \"fly\": the Up input (keyboard ArrowUp/W and touch Up) must perform a jump, and the player must fall when not supported by a solid tile beneath.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-keyboard-movement-handling-to-align-with-the-new-controls-left-right-down-remain-directional-movement-while-up-triggers-jump-not-vertical-step-movement",
+      "title": "Update keyboard movement handling to align with the new controls: left/right/down remain directional movement, while up triggers jump (not vertical step movement).",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-hud-user-facing-movement-instructions-in-english-to-describe-keyboard-movement-touch-only-on-screen-controls-and-that-up-is-jump-no-flying",
+      "title": "Update the HUD user-facing movement instructions in English to describe: keyboard movement, touch-only on-screen controls, and that Up is Jump (no flying).",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-visible-hotbar-ui-to-the-main-game-screen-that-displays-the-player-s-collected-mined-blocks-and-treat-the-hotbar-as-the-only-inventory-for-this-mvp",
+      "title": "Add a visible hotbar UI to the main game screen that displays the player’s collected mined blocks, and treat the hotbar as the only inventory for this MVP.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-a-tile-is-fully-mined-i-e-it-transitions-from-a-solid-block-to-air-automatically-add-exactly-1-of-that-block-type-to-the-hotbar-inventory-immediately-no-intermediate-pickup-step",
+      "title": "When a tile is fully mined (i.e., it transitions from a solid block to air), automatically add exactly 1 of that block type to the hotbar inventory immediately (no intermediate pickup step).",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-in-game-hud-text-english-to-mention-that-mined-blocks-automatically-go-straight-into-the-hotbar",
+      "title": "Update the in-game HUD text (English) to mention that mined blocks automatically go straight into the hotbar.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "MVP: 2D world with two layers only (dirt on top, stone below)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Click-to-mine blocks; some blocks require more clicks based on value/hardness",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Darkness/fog-of-war: only blocks adjacent to air (mined-out spaces) are visible; everything else is black",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "World is continuous: surface and underground in same world; enter shop by walking to a door and clicking it",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Support 2-player gameplay (same computer and/or separate devices)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Mobile/tablet on-screen controls (arrow buttons + jump)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add a movable player marker; player can mine only blocks adjacent to air (4-neighbor), and mining reveals/makes adjacent blocks visible & mineable",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Add a simple hotbar-only inventory: mined blocks automatically go straight into the visible hotbar",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "2d",
+  "projectName": "Shadow Mine",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
